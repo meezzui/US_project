@@ -170,7 +170,7 @@ const PostEditDelete = styled.div`
 
 const UploadPage = () => {
 
-    //게시물 수정/삭제 팝업열기
+    //게시물 수정/삭제 선택 팝업열기
     const[PostOptionOn, setPostOptionOn] = React.useState(false);
     const OpenPostOption = () =>{
         setPostOptionOn(!PostOptionOn);
