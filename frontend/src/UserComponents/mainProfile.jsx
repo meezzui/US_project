@@ -114,7 +114,7 @@ const MainProfileWrap = styled.div`
     .post2_pop_box{position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); background:white;border:none; width: 60rem; height: 56rem; border-radius: 15px; padding: 1rem;}
     .wr_upload_txt{text-align:center; font-size: 2.3rem; margin:1rem 0; font-weight:600;}
     .txt_table{border:1px;}
-    .post_input_txt{width: 55rem; height: 33.5rem; border: 3px solid #a5a7c38a; margin-top:-0.5rem; resize:none; font-size:2rem;}
+    .post_input_txt{width: 55rem; height: 39.5rem; border: 3px solid #a5a7c38a; margin-top:-0.5rem; resize:none; font-size:2rem;}
     .post_input_txt_box{display:flex; justify-content:center; margin-top:3rem;}
     .post_txt_btn{border-radius: 5px; background-color: #14c1c7; color: white; border: none; height: 3.5rem; width:10rem; cursor: pointer;}
     .post_txt_btn_box{margin-top: 3.7rem; display: flex; justify-content: center;}
