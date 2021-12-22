@@ -199,7 +199,7 @@ const postDetail = function(postIdx, callback){
             const sql2 = 'select imgName from img where postIdx = ?;';
             const sql2s = mysql.format(sql2, postIdx);
 
-            const sql3 = 'select r.content, m.name, m.img, m.idx, r.groupIdx, r.depth, r.createdAt from reply as r join member as m on r.memberIdx = m.idx where postIdx = ? order by groupIdx asc, groupNum asc;';
+            const sql3 = 'select r.content, m.name, m.email, m.img, r.memberIdx, r.idx, r.groupIdx, r.depth, r.createdAt from reply as r join member as m on r.memberIdx = m.idx where postIdx = ? order by groupIdx asc, groupNum asc;';
             const sql3s = mysql.format(sql3, postIdx);
 
             conn.query(sql1s + sql2s + sql3s, (err, result) => {
