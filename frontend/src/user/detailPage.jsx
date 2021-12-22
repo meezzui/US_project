@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Header from "../UserComponents/header";
+import ReplyLike from "../UserComponents/replyLike";
 import styled from "styled-components";
 import { Link, useParams } from "react-router-dom";
 import axios from "axios";
@@ -38,15 +39,14 @@ const UploadForm = styled.div`
     .next_box{position:absolute; top:45%; right:0;}
     .reply1_box{display:flex; margin: 2rem 1rem 1rem 1rem;}
     .re_profile_img{width: 3rem; height: 3rem; border-radius: 50%; border: 2px solid #00000054;}
-    .re_reply{font-size: 1.4rem; margin:0.5rem; text-overflow: ellipsis; overflow: hidden;}
+    .re_reply{font-size: 1.4rem; margin:0.5rem; }
     .re_time{font-size: 0.7rem; margin-left:1.5rem; color: gray;}
     .reply2_box{display:flex; margin: 1rem 1rem 1rem 6.5rem;}
     .reply3_box{display:flex; margin: 1rem 1rem 1rem 12rem;}
     .input_reply_box{display:flex;}
     .re_btn{background:none; color:#14c1c7; border:none; height:3.9rem; width:4.4rem; font-weight:600;font-size:1.5rem; line-height: 4.7rem; cursor:pointer;}
     .input_reply_container{margin-top: 32rem; height: 4rem; position: absolute; bottom:1rem;}
-    .like_img{width:2rem; height:2rem;}
-    .like_box{display:flex; margin-left: auto;}
+    .like_img{width:2rem; height:2rem; cursor:pointer;}
     .in_input{outline: none; width:30rem; height:2.5rem; border: 1px solid #808080b0; resize:none; border-radius:15px; line-height: 2.5rem; font-size: 1.3rem; padding: 0.5rem 1rem; font-family: 'Nanum Gothic', sans-serif;}
     .re_time_reply_box{display:flex;}
     .reply_btn{border:none; background:none; color:gray; font-size:0.5rem; cursor:pointer; margin:0; line-height:0.1rem; font-weight:600;}
@@ -56,7 +56,8 @@ const UploadForm = styled.div`
     .re_delete_btn{padding:0;}
     .re_delete{font-size: 0.5rem; color: gray; line-height: 0rem; margin: 0; font-weight:600;}
     .in_input_box{margin:0.5rem;}
-    .like_btn{background:none; border:none;}
+    .like_box{display:flex; margin-left: auto;}
+    .like_btn{ background:none; border:none; }
     .re_id_box{display:flex;}
     .re_id_div{margin:1rem 0 0 0.5rem;}
     .re_id_span{font-size: 1.5rem; font-weight: 600; line-height: 1rem;}
@@ -192,8 +193,9 @@ function timeForToday(value) {
 }
 
 const UploadPage = () => {
-    const param = window.location.search.split('=')[1];
-    const {idx} = useParams();  // 넘겨받은 id값
+    const param = window.location.search.split('=')[1]  // memberIdx
+
+    const {idx} = useParams();  // postIdx
     const [memEmail, setMemEmail] = useState('');
     const [memImg, setMemImg] = useState('');
     const [postContent, setPostContent] = useState('');
@@ -447,121 +449,132 @@ const UploadPage = () => {
                         </div>
                         <div className="up_replay_box">
                             <div className="up_reply_minibox">
+                                {/* 댓글시작 */}
                                 {
-                                    replyArr.length !== 0 ? replyArr.map((rowData) => {
-                                        if(rowData.depth === 0){
-                                            return(
-                                                <div className="reply1_box">
-                                                    <div className="re_profile">
-                                                        <img className="re_profile_img" src={"/"+rowData.img} alt="댓글 프로필"/>
-                                                    </div>
-                                                    <div className="re_reply_box">
-                                                        <div className="re_id_box">
-                                                            <div className="re_id_div">
-                                                                <span className="re_id_span">{rowData.email.split('@')[0]}</span>
+                                    replyArr.length !== 0 ?
+                                        replyArr.map((data) => {
+                                            if(data.depth===0){
+                                                return (
+                                                    <div className="reply1_box">
+                                                        <div className="re_profile">
+                                                            <img className="re_profile_img" src={"/"+data.img} alt="댓글 프로필"/>
+                                                        </div>
+                                                        <div className="re_reply_box">
+                                                            <div className="re_id_box">
+                                                                <div className="re_id_div">
+                                                                    <span className="re_id_span">{data.email.split('@')[0]}</span>
+                                                                </div>
+                                                                <div className="re_reply">
+                                                                    <span className="reply">{data.content}</span>
+                                                                </div>
                                                             </div>
-                                                            <div className="re_reply">
-                                                                <span className="reply">{rowData.content}</span>
+                                                            <div className="re_time_reply_box">
+                                                                <div className="re_time">
+                                                                    <span>{timeForToday(data.createdAt)}</span>
+                                                                </div>
+                                                                <div>
+                                                                    <button type="button" className="reply_btn">댓글달기</button>
+                                                                </div>
+                                                                {
+                                                                    param == data.memberIdx ? 
+                                                                    <div className="re_delete_box">
+                                                                        <button className="re_delete_btn" type="button">
+                                                                            <p className="re_delete">삭제</p>
+                                                                        </button>
+                                                                    </div>
+                                                                    :
+                                                                    ""
+                                                                }
                                                             </div>
                                                         </div>
-                                                        <div className="re_time_reply_box">
-                                                            <div className="re_time">
-                                                                <span>{timeForToday(rowData.createdAt)}</span>
+                                                        <ReplyLike className="like_box" replyIdx={data.idx} memberIdx={param}/>
+                                                    </div>
+                                                )
+                                            } else if(data.depth===1) {
+                                                return (
+                                                    <div className="reply2_box">
+                                                        <div className="re_profile">
+                                                            <img className="re_profile_img" src={"/"+data.img} alt="댓글 프로필"/>
+                                                        </div>
+                                                        <div className="re_reply_box">
+                                                            <div className="re_id_box">
+                                                                <div className="re_id_div">
+                                                                    <span className="re_id_span">{data.email.split('@')[0]}</span>
+                                                                </div>
+                                                                <div className="re_reply">
+                                                                    <span className="reply">{data.content}</span>
+                                                                </div>
                                                             </div>
-                                                            <div>
-                                                                <button type="button" className="reply_btn">댓글달기</button>
-                                                            </div>
-                                                            <div className="re_delete_box">
-                                                                <button className="re_delete_btn" type="button">
-                                                                    <p className="re_delete">삭제</p>
-                                                                </button>
+                                                            <div className="re_time_reply_box">
+                                                                <div className="re_time">
+                                                                    <span>{timeForToday(data.createdAt)}</span>
+                                                                </div>
+                                                                <div>
+                                                                    <button type="button" className="reply_btn">댓글달기</button>
+                                                                </div>
+                                                                {
+                                                                    param == data.memberIdx ? 
+                                                                    <div className="re_delete_box">
+                                                                        <button className="re_delete_btn" type="button">
+                                                                            <p className="re_delete">삭제</p>
+                                                                        </button>
+                                                                    </div>
+                                                                    : ""
+                                                                }
                                                             </div>
                                                         </div>
+                                                        <ReplyLike className="like_box" replyIdx={data.idx} memberIdx={param}/>
                                                     </div>
-                                                    <div className="like_box">
-                                                        <button type="button" className="like_btn"><img className="like_img" src="/img/smile.png" alt="좋아요"/></button>
-                                                    </div>
-                                                </div>
-                                            )
-                                        }else if(rowData.depth === 1){
-                                            return(
-                                                <div className="reply2_box">
-                                                    <div className="re_profile">
-                                                        <img className="re_profile_img" src={"/"+rowData.img} alt="댓글 프로필"/>
-                                                    </div>
-                                                    <div className="re_reply_box">
-                                                        <div className="re_id_box">
-                                                            <div className="re_id_div">
-                                                                <span className="re_id_span">{rowData.email.split('@')[0]}</span>
+                                                )
+                                            } else {
+                                                return (
+                                                    <div className="reply3_box">
+                                                        <div className="re_profile">
+                                                            <img className="re_profile_img" src={"/"+data.img} alt="댓글 프로필"/>
+                                                        </div>
+                                                        <div className="re_reply_box">
+                                                            <div className="re_id_box">
+                                                                <div className="re_id_div">
+                                                                    <span className="re_id_span">{data.email.split('@')[0]}</span>
+                                                                </div>
+                                                                <div className="re_reply">
+                                                                    <span className="reply">{data.content}</span>
+                                                                </div>
                                                             </div>
-                                                            <div className="re_reply">
-                                                                <span className="reply">{rowData.content}</span>
+                                                            <div className="re_time_reply_box">
+                                                                <div className="re_time">
+                                                                    <span>{timeForToday(data.createdAt)}</span>
+                                                                </div>
+                                                                <div>
+                                                                    <button type="button" className="reply_btn">댓글달기</button>
+                                                                </div>
+                                                                {
+                                                                    param == data.memberIdx ? 
+                                                                    <div className="re_delete_box">
+                                                                        <button className="re_delete_btn" type="button">
+                                                                            <p className="re_delete">삭제</p>
+                                                                        </button>
+                                                                    </div>
+                                                                    :
+                                                                    ""
+                                                                }
                                                             </div>
                                                         </div>
-                                                        <div className="re_time_reply_box">
-                                                            <div className="re_time">
-                                                                <span>{timeForToday(rowData.createdAt)}</span>
-                                                            </div>
-                                                            <div>
-                                                                <button type="button" className="reply_btn">댓글달기</button>
-                                                            </div>
-                                                            <div className="re_delete_box">
-                                                                <button className="re_delete_btn" type="button">
-                                                                    <p className="re_delete">삭제</p>
-                                                                </button>
-                                                            </div>
-                                                        </div>
+                                                        <ReplyLike className="like_box" replyIdx={data.idx} memberIdx={param}/>
                                                     </div>
-                                                    <div className="like_box">
-                                                        <button type="button" className="like_btn"><img className="like_img" src="/img/smile.png" alt="좋아요"/></button>
-                                                    </div>
-                                                </div>
-                                            )
-                                        }else{
-                                            return(
-                                                <div className="reply3_box">
-                                                    <div className="re_profile">
-                                                        <img className="re_profile_img" src={"/"+rowData.img} alt="댓글 프로필"/>
-                                                    </div>
-                                                    <div className="re_reply_box">
-                                                        <div className="re_id_box">
-                                                            <div className="re_id_div">
-                                                                <span className="re_id_span">{rowData.email.split('@')[0]}</span>
-                                                            </div>
-                                                            <div className="re_reply">
-                                                                <span className="reply">{rowData.content}</span>
-                                                            </div>
-                                                        </div>
-                                                        <div className="re_time_reply_box">
-                                                            <div className="re_time">
-                                                                <span>{timeForToday(rowData.createdAt)}</span>
-                                                            </div>
-                                                            <div>
-                                                                <button type="button" className="reply_btn">댓글달기</button>
-                                                            </div>
-                                                            <div className="re_delete_box">
-                                                                <button className="re_delete_btn" type="button">
-                                                                    <p className="re_delete">삭제</p>
-                                                                </button>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div className="like_box">
-                                                        <button type="button" className="like_btn"><img className="like_img" src="/img/smile.png" alt="좋아요"/></button>
-                                                    </div>
-                                                </div>
-                                            )
-                                        }
-                                    })
+                                                )
+                                            }
+                                        })
                                     :
-                                    <></>
+                                    <div>등록된 댓글이 없습니다. 댓글을 등록해보세요.</div>
                                 }
+                                {/* 댓글끝 */}
                             </div>
                             <div className="input_reply_container">
                                 <form>
                                     <div className="input_reply_box">
                                         <div className="in_input_box">
-                                            <textarea className="in_input" value="댓글 달기.."/>
+                                            <textarea className="in_input" placeholder="댓글 달기.."/>
                                         </div>
                                         <div className="re_btn_box">
                                             <button type="submit" className="re_btn">게시</button>
