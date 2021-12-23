@@ -3,9 +3,13 @@ const mysql = require('mysql');
 const config = require('../config/config.json');
 const bodyParser = require('body-parser');
 const pool = mysql.createPool(config);
+const cors = require('cors');
 
 const router = express.Router()
 router.use(bodyParser.urlencoded({ extended: false }))
+router.use(bodyParser.json())
+// router.use(bodyParser.urlencoded({ extends: true }))  
+router.use(cors({origin : 'http://localhost:3000', credentials : true, methods : "PUT,GET,POST,DELETE,OPTIONS,HEAD"}));
 
 // 댓글 입력
 router.route('/reply/insert_reply').post((req, res) => {
@@ -15,6 +19,8 @@ router.route('/reply/insert_reply').post((req, res) => {
     const content = req.body.content;
     const memberIdx = req.body.memberIdx;
     const parentIdx = req.body.parentIdx;
+
+    console.log(idx,groupIdx,postIdx,content,memberIdx, parentIdx);
 
     if (pool) {
         replyInsert(idx, groupIdx, postIdx, content, memberIdx, (err, result) => {
@@ -50,7 +56,7 @@ router.route('/reply/edit_reply').put((req, res) => {
 })
 
 // 댓글 삭제
-router.route('/reply/delete_reply').delete((req, res) => {
+router.route('/reply/delete_reply').get((req, res) => {
     const idx = req.query.idx;
 
     if (pool) {
@@ -72,7 +78,7 @@ router.route('/reply/like').get((req, res) => {
     const replyIdx = req.query.replyIdx;
     const memberIdx = req.query.memberIdx;
 
-    if (pool) {
+    if (당구) {
         replyLike(replyIdx, memberIdx, (err, result) => {
             if (err) {
                 res.writeHead('201', { 'content-type': 'text/html; charset=utf8' });
