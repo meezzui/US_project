@@ -74,8 +74,8 @@ const postDetail = function(postIdx, callback){
         if (err) {
             console.log(err);
         } else {
-            const sql1 = 'select p.content, p.createdAt, m.email, m.name, m.img from post as p join member as m on p.memberIdx = m.idx where p.idx = ?;';
-            const sql1s = mysql.format(sql1, postIdx)
+            const sql1 = 'select p.memberIdx, p.content, p.createdAt, m.email, m.name, m.img from post as p join member as m on p.memberIdx = m.idx where p.idx = ?;';
+            const sql1s = mysql.format(sql1, postIdx);
 
             const sql2 = 'select imgName from img where postIdx = ?;';
             const sql2s = mysql.format(sql2, postIdx);
@@ -97,7 +97,7 @@ const postDetail = function(postIdx, callback){
 }
 
 // 게시글 수정
-router.route('/post/edit').put(upload.array('fileupload', 10), (req, res) => {
+router.route('/post/edit').post(upload.array('fileupload', 10), (req, res) => {
     const idx = req.body.idx;
     const content = req.body.content;
     const file = req.files;

@@ -6,6 +6,7 @@ import { Link, useParams } from "react-router-dom";
 import axios from "axios";
 
 const UploadForm = styled.div`
+    button{cursor:pointer;}
     @import url('https://fonts.googleapis.com/css2?family=Nanum+Gothic&display=swap');
     .upload_container{max-width: 100rem; border: 2px solid #a5a7c38a; height: 82rem; margin: 1rem auto;}
     .upload_header_box{display:flex; margin:2rem; position:relative; padding: 0 1rem; width:54rem;}
@@ -45,7 +46,7 @@ const UploadForm = styled.div`
     .reply3_box{display:flex; margin: 1rem 1rem 1rem 12rem;}
     .input_reply_box{display:flex;}
     .re_btn{background:none; color:#14c1c7; border:none; height:3.9rem; width:4.4rem; font-weight:600;font-size:1.5rem; line-height: 4.7rem; cursor:pointer;}
-    .input_reply_container{margin-top: 32rem; height: 4rem; position: absolute; bottom:1rem;}
+    .input_reply_container{margin-top: 32rem; position: absolute; bottom:1rem;}
     .like_img{width:2rem; height:2rem; cursor:pointer;}
     .in_input{outline: none; width:30rem; height:2.5rem; border: 1px solid #808080b0; resize:none; border-radius:15px; line-height: 2.5rem; font-size: 1.3rem; padding: 0.5rem 1rem; font-family: 'Nanum Gothic', sans-serif;}
     .re_time_reply_box{display:flex;}
@@ -53,7 +54,7 @@ const UploadForm = styled.div`
     .re_delete_btn{background: none; border: none;}
     .like_delete_box{display:flex;}
     .re_delete_box{display:flex;}
-    .re_delete_btn{padding:0;}
+    .re_delete_btn{padding:0; cursor:pointer;}
     .re_delete{font-size: 0.5rem; color: gray; line-height: 0rem; margin: 0; font-weight:600;}
     .in_input_box{margin:0.5rem;}
     .like_box{display:flex; margin-left: auto;}
@@ -200,6 +201,7 @@ const UploadPage = () => {
     const [memImg, setMemImg] = useState('');
     const [postContent, setPostContent] = useState('');
     const [postTime, setPostTime] = useState('');
+    const [postMemIdx, setPostMemIdx] = useState('');
     const [postImgArr, setPostImgArr] = useState([]);
     const [replyArr, setReplyArr] = useState([]);
 
@@ -207,12 +209,21 @@ const UploadPage = () => {
     let [scrollImg, setScrollImg ] = useState(''); // imgName 저장
 
     // 대댓글 댓글idx, 그룹idx
-    const [reReIdx, setReRe] = useState(null);
-    const [reReGroupIdx, setReReFroupIdx] = useState(null);
+    const [reReIdx, setReReIdx] = useState(null);
+    const [reReGroupIdx, setReReGroupIdx] = useState(null);
+    const [reReName, setReReName] = useState(null);
 
-    // 댓글 입력 textarea 선택
+    // 내용 업데이트 상태
+    const [isUpdate, setIsUpdate] = useState(false);
+
+    // 댓글 입력 textarea
     const replyValue = useRef();
-    
+
+    // 게시물 수정 textarea
+    const editContent = useRef();
+    // 게시물 수정 파일저장
+    const [imgFile, setImgFile] = useState(null);
+
     useEffect(async () => {
         const list = await axios.get("http://localhost:3001/post/detail?postIdx="+idx);
         console.log(list);
@@ -220,6 +231,7 @@ const UploadPage = () => {
         setMemEmail(list.data[0][0].email.split('@')[0]);
         setMemImg(list.data[0][0].img);
         setPostContent(list.data[0][0].content);
+        setPostMemIdx(list.data[0][0].memberIdx);
         setPostTime(timeForToday(list.data[0][0].createdAt));
         setPostImgArr(list.data[1]);
         setReplyArr(list.data[2]);
@@ -230,7 +242,7 @@ const UploadPage = () => {
         }else{
             setDetailImg(0)
         }
-    }, []);
+    }, [isUpdate]);
 
     useEffect(async () => { // scrollImg-useEffect
         if(postImgArr.length!==0){
@@ -284,9 +296,30 @@ const UploadPage = () => {
     }
 
     // 게시물 수정 실행
-    function editSubmit () {
-        alert('수정되었습니다.');
-        window.location.reload();
+    const editSubmit = async () => {
+        const content = editContent.current.value;
+        console.log(content);
+        console.log(imgFile);
+        let formData = new FormData();
+        
+        if(imgFile!==null){   // 수정할 사진을 등록했을 경우
+            for (const key of Object.keys(imgFile)) {
+                formData.append('fileupload', imgFile[key]);
+            }
+        }
+            formData.append('idx', idx);
+            formData.append('content', content);
+            formData.append('hashTag', '');
+    
+            return await axios.post(`http://localhost:3001/post/edit`, formData, {
+                headers: {
+                    "Content-Type": "multipart/form-data",
+                }
+            }).then((res)=>{
+                alert('게시물이 등록되었습니다.');
+                console.log(res);
+                window.location.href = '/detail/'+idx+'?idx=' + param;
+            });
     }
 
     // 게시물 삭제하기 실행
@@ -295,7 +328,7 @@ const UploadPage = () => {
         .then(function (response) {
             console.log(response);
             alert('삭제되었습니다.');
-            window.location.href = '/main?idx='+param;
+            setIsUpdate(true);
         })
         .catch(function (error) {
             alert('삭제실패했습니다..');
@@ -322,10 +355,10 @@ const UploadPage = () => {
         }).then(function (response) {
             console.log(response);
             alert('등록되었습니다.');
-            window.location.href="/detail/"+idx+"?idx"+param;
+            window.location.href=`/detail/${idx}?idx=${param}`;
         })
         .catch(function (error) {
-            alert('등록 실패했습니다.');
+            alert('등록실패했습니다.');
             console.log(error);
         })
         .then(function () {
@@ -338,7 +371,7 @@ const UploadPage = () => {
         .then(function (response) {
             console.log(response);
             alert('삭제되었습니다.');
-            window.location.href="/detail/"+idx+"?idx"+param;
+            setIsUpdate(true);
         })
         .catch(function (error) {
             alert('삭제 실패했습니다.');
@@ -380,11 +413,11 @@ const UploadPage = () => {
                 <div className="popContainer">
                     <div className="popHeader">
                         <div className="title">게시글 수정</div>
-                        <img className="closeIcon" src="img/clear_black.png" alt="엑스버튼" onClick={openEditOn}/>
+                        <img className="closeIcon" src="/img/clear_black.png" alt="엑스버튼" onClick={openEditOn}/>
                     </div>
                     <div className="popContent">
                         <div className="textWrap">
-                            <textarea name="content" id="content">헤이 모두들 안녕?? 내가 누군지 아뉘??</textarea>
+                            <textarea name="content" id="content" ref={editContent}>{postContent}</textarea>
                         </div>
                         <div className="post1_pop_sec2">
                             <div className="filebox">
@@ -400,12 +433,16 @@ const UploadPage = () => {
                             </div>
                             <div className="prev_upload_box">
                                 <div className="prev_upload">
-                                    <span>
-                                        <div className="prev_img">
-                                            <img src="img/hamster_profile.jpg" alt="게시물사진"/>
-                                            <br/><div className="img_del"><i className="fas fa-times-circle"></i></div>
-                                        </div>
-                                    </span>
+                                    {postImgArr.map((data)=>{
+                                        return(
+                                            <span>
+                                                <div className="prev_img">
+                                                    <img src={'/uploads/'+data.imgName} alt="게시물사진"/>
+                                                    <br/><div className="img_del"><i className="fas fa-times-circle"></i></div>
+                                                </div>
+                                            </span>
+                                        )
+                                    })}
                                 </div>
                             </div>
                         </div>
@@ -428,7 +465,7 @@ const UploadPage = () => {
                         <div className="title"><img src="img/us_logo.png" alt="로고" /></div>
                     </div>
                     <div className="popContent">
-                        <div className="textWrap">게시물을 삭제하시겠습니까?</div>
+                        <div className="textWrap">{}</div>
                     </div>
                     <div className="btnWrap">
                         <button type="submit" onClick={delSubmit}>네, 삭제할래요</button>
@@ -452,7 +489,7 @@ const UploadPage = () => {
                         <div className="upload_header_box">
                             <div className="upload_profile_box">
                                 <div className="upload_profile">
-                                    <img className="upload_profile_img" src={'/'+memImg} alt="게시물 프로필"/>
+                                    <img className="upload_profile_img" src={memImg!==null?'/'+memImg:'/img/blank_profile.png'} alt="게시물 프로필"/>
                                 </div>
                                 <div className="up_pro_time_container">
                                     <div className="upload_profile_id">
@@ -463,12 +500,15 @@ const UploadPage = () => {
                                     </div>
                                 </div>
                             </div>
-                            <div className="upload_option_box">
-                                <button className="option_btn" onClick={OpenPostOption}>
-                                    <img className="upload_option_img" src="/img/more_vert_black.png" alt="게시물 메뉴"/>
-                                </button>
-                                {PostOptionOn?<PostOption/>:''}
-                            </div>
+                            {postMemIdx==param ?
+                                <div className="upload_option_box">
+                                    <button className="option_btn" onClick={OpenPostOption}>
+                                        <img className="upload_option_img" src="/img/more_vert_black.png" alt="게시물 메뉴"/>
+                                    </button>
+                                    {PostOptionOn?<PostOption/>:''}
+                                </div>
+                            :
+                            ''}
                         </div>
                         <div className="post_images_box">
                             <div className="images_list">
@@ -515,7 +555,7 @@ const UploadPage = () => {
                                                 return (
                                                     <div className="reply1_box">
                                                         <div className="re_profile">
-                                                            <img className="re_profile_img" src={"/"+data.img} alt="댓글 프로필"/>
+                                                            <img className="re_profile_img" src={data.img!==null?"/"+data.img:'/img/blank_profile.png'} alt="댓글 프로필"/>
                                                         </div>
                                                         <div className="re_reply_box">
                                                             <div className="re_id_box">
@@ -531,7 +571,7 @@ const UploadPage = () => {
                                                                     <span>{timeForToday(data.createdAt)}</span>
                                                                 </div>
                                                                 <div>
-                                                                    <button type="button" className="reply_btn">댓글달기</button>
+                                                                    <button type="button" className="reply_btn" onClick={()=>{setReReIdx(data.idx); setReReGroupIdx(data.groupIdx); setReReName(data.email.split('@')[0]);}}>댓글달기</button>
                                                                 </div>
                                                                 {
                                                                     param == data.memberIdx ? 
@@ -552,7 +592,7 @@ const UploadPage = () => {
                                                 return (
                                                     <div className="reply2_box">
                                                         <div className="re_profile">
-                                                            <img className="re_profile_img" src={"/"+data.img} alt="댓글 프로필"/>
+                                                            <img className="re_profile_img" src={data.img!==null?"/"+data.img:'/img/blank_profile.png'} alt="댓글 프로필"/>
                                                         </div>
                                                         <div className="re_reply_box">
                                                             <div className="re_id_box">
@@ -568,7 +608,7 @@ const UploadPage = () => {
                                                                     <span>{timeForToday(data.createdAt)}</span>
                                                                 </div>
                                                                 <div>
-                                                                    <button type="button" className="reply_btn">댓글달기</button>
+                                                                    <button type="button" className="reply_btn" onClick={()=>{setReReIdx(data.idx); setReReGroupIdx(data.groupIdx); setReReName(data.email.split('@')[0]);}}>댓글달기</button>
                                                                 </div>
                                                                 {
                                                                     param == data.memberIdx ? 
@@ -588,7 +628,7 @@ const UploadPage = () => {
                                                 return (
                                                     <div className="reply3_box">
                                                         <div className="re_profile">
-                                                            <img className="re_profile_img" src={"/"+data.img} alt="댓글 프로필"/>
+                                                            <img className="re_profile_img" src={data.img!==null?"/"+data.img:'/img/blank_profile.png'} alt="댓글 프로필"/>
                                                         </div>
                                                         <div className="re_reply_box">
                                                             <div className="re_id_box">
@@ -604,7 +644,7 @@ const UploadPage = () => {
                                                                     <span>{timeForToday(data.createdAt)}</span>
                                                                 </div>
                                                                 <div>
-                                                                    <button type="button" className="reply_btn">댓글달기</button>
+                                                                    <button type="button" className="reply_btn" onClick={()=>{setReReIdx(data.idx); setReReGroupIdx(data.groupIdx); setReReName(data.email.split('@')[0]);}}>댓글달기</button>
                                                                 </div>
                                                                 {
                                                                     param == data.memberIdx ? 
@@ -629,16 +669,24 @@ const UploadPage = () => {
                                 {/* 댓글끝 */}
                             </div>
                             <div className="input_reply_container">
-                                <form>
-                                    <div className="input_reply_box">
-                                        <div className="in_input_box">
-                                            <textarea className="in_input" placeholder="댓글 달기.." ref={replyValue}/>
-                                        </div>
-                                        <div className="re_btn_box">
-                                            <button type="submit" className="re_btn" onClick={submitReply}>게시</button>
-                                        </div>
+                                {reReIdx!==null?
+                                <div className="reply_to_wrap">
+                                    <div className="reply_to_box" style={{display:'inline-block', backgroundColor:'#14c1c7', borderRadius:'3rem',color:'#fff', marginLeft:'1rem', padding:'.3rem .5rem'}}>
+                                        <span className="reply_to_val">{reReName}</span>
+                                        <span className="reply_to_del" style={{marginLeft:'.5rem', cursor:'pointer'}} onClick={()=>{setReReIdx(null); setReReGroupIdx(null); setReReName(null)}}>X</span>
                                     </div>
-                                </form>
+                                </div>
+                                :
+                                ''
+                                }
+                                <div className="input_reply_box">
+                                    <div className="in_input_box">
+                                        <textarea className="in_input" placeholder="댓글 달기.." ref={replyValue}/>
+                                    </div>
+                                    <div className="re_btn_box">
+                                        <button type="submit" className="re_btn" onClick={submitReply}>게시</button>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -655,8 +703,10 @@ const UploadPage = () => {
 
     //이미지 업로드 js 
     function handleFileSelect(evt) {
+        setImgFile(evt.target.files);
         let fileSize = document.querySelectorAll(".prev_img");
         var files = evt.target.files;
+        // document.querySelector('.prev_upload').removeChild('span');
         if(fileSize.length + files.length < 7){
         for (var i = 0, f; f = files[i]; i++) {
             if (!f.type.match('image.*')) {
@@ -673,7 +723,7 @@ const UploadPage = () => {
                             '" title="', escape(theFile.name),
                             '" alt="게시물 사진"/><br><div class="img_del"><i class="fas fa-times-circle"></i></div></div>'
                         ].join('');
-                    document.querySelector('.prev_upload').insertBefore(span, null);
+                    document.querySelector('.prev_upload').insertBefore(span,null);
                     const muti_img_list = document.querySelectorAll(".img_del");
                     for (let i = 0; i < muti_img_list.length; i++) {
                         muti_img_list[i].addEventListener('click', function () {
