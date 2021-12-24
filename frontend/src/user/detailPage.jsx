@@ -316,7 +316,7 @@ const UploadPage = () => {
                     "Content-Type": "multipart/form-data",
                 }
             }).then((res)=>{
-                alert('게시물이 등록되었습니다.');
+                alert('게시물이 수정되었습니다.');
                 console.log(res);
                 window.location.href = '/detail/'+idx+'?idx=' + param;
             });
