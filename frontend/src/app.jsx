@@ -33,6 +33,7 @@ import Mypage from './user/mypage';
 import MypagePw from './user/mypagePw';
 import MypageLogin from './user/mypageLogin';
 import MypageQnA from './user/mypageQnA';
+
 import DetailPage from './user/detailPage';
 
 function App() {
@@ -62,7 +63,7 @@ function App() {
         <Route path={"/Regist1"} element={<RegistPage/>}/>
         <Route path={"/"} element={<SignInPage/>}/>
         <Route path={"/FindIdPw"} element={<FindIdPage/>}/>
-        <Route path={"/SuckFindId"} element={<FinishIdPage/>}/>
+        <Route path={"/SuckFindId/:urldata"} element={<FinishIdPage/>}/>
         <Route path={"/FindIdPw2"} element={<FindPwPage/>}/>
         <Route path={"/FinFindidpw"} element={<FinishPwPage/>}/>
 
