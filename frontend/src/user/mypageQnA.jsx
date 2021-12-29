@@ -136,24 +136,35 @@ const MyPageQnA = () =>{
         setCodeFriend({info:findFriend.data.result1[0], flag:findFriend.data.flag});
     }
 
-    // 문의하기 axios 제출
-    const goRegist = async () => {
-        let korType = '';
-        
-        if(type==='declaration'){
-            korType += '신고하기';
-            korType += '일반문의';
-        }
-        let log = await axios.post('http://localhost:3001/inquiry?memberIdx='+param+"&title="+title+"&content="+content+"&type="+korType)
-        console.log(log);
-        if(log.data===true){
-            alert('문의가 등록되었습니다.');
-            window.location.reload();
-        }else{
-            alert('다시 입력해 주세요!')
-            window.location.reload();
-        }
+ // 문의하기 axios 제출
+ const goRegist = async () => {
+    let korType = '';
+    
+    if(type==='declaration'){
+        korType += '신고하기';
+    } else {
+        korType += '일반문의';
     }
+
+    console.log(defendant);
+
+    await axios({
+        method: "post",
+        url:`http://localhost:3001/inquiry`,
+        data: {
+            memberIdx: param,
+            title: title,
+            content: content,
+            type: korType,
+            respondent : defendant.idx
+        }
+    });
+
+    alert('등록되었습니다.');
+    window.location.reload();
+}
+
+
 
     const onOpenModal = (e) => {
         setModalOn(!modalOn);
@@ -193,7 +204,7 @@ const MyPageQnA = () =>{
 
     return (
         <>
-            <Header/>
+            <Header idx={param} param={param}/>
             <MyPageQnAWrap>
                 <div className="container">
                     <div>

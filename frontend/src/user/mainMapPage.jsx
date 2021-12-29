@@ -18,7 +18,7 @@ const MainMapPage = () =>{
 
     return (
         <>
-        <Header/>
+        <Header idx={param} param={param}/>
         <MainForm>
             <div className="container">
                 <MainProfile idx={param}/>

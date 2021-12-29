@@ -22,15 +22,13 @@ const HeaderForm = styled.div`
 
         })
     }
-const Header = () =>{
-    // memberIdx
-    const param = window.location.search.split('=')[1];
+const Header = ({idx,param}) =>{
     return (
         <HeaderForm>
             <div className="header_container">
                 <div className="header_box">
                     <div className="logo_box">
-                        <Link to={"/main?idx="+param}><img className="logo_img" alt="logo" src="/img/us_logo.png"/></Link>
+                        <img className="logo_img" alt="logo" src="/img/us_logo.png" onClick={()=>{window.location.href=`/main/${param}?idx=${param}`}}/>
                     </div>
                     <div className="logout_box">
                         <img className="logout_tag" onClick={logout} alt="logout" src="/img/logout_img.png"/>

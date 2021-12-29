@@ -162,7 +162,7 @@ const Mypage = () =>{
 
     // 탈퇴진행
     const withdrawRun = ()=>{
-        axios.get('http://127.0.0.1:3000/member/delete?idx='+param)
+        axios.get('http://localhost:3001/member/delete?idx='+param)
         .then(function (response) {
             // handle success
             console.log(response);
@@ -217,7 +217,7 @@ const Mypage = () =>{
     return (
         <>
             {withdrawPop ? <WithdrawPop/> : ""}
-            <Header/>
+            <Header idx={param} param={param}/>
             <MypageWrap>
                 <div className="container">
                     <div className="navForm">
