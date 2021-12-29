@@ -14,10 +14,10 @@ const storage = multer.diskStorage({
     destination: function (req, file, cb) {
         // 이미지 파일
         if (file.mimetype == "image/jpeg" || file.mimetype == "image/jpg" || file.mimetype == "image/png") {
-            cb(null, 'C:/Users/user/Desktop/projectFile/project3/us/frontend/public/uploads')
+            cb(null, 'C:/Users/user/Desktop/projectFile/project4/us/us/frontend/public/uploads')
             //텍스트 파일
         } else if (file.mimetype == "application/pdf" || file.mimetype == "application/txt" || file.mimetype == "application/octet-stream") {
-            cb(null, 'C:/Users/user/Desktop/projectFile/project3/us/frontend/public/uploads')
+            cb(null, 'C:/Users/user/Desktop/projectFile/project4/us/us/frontend/public/uploads')
         }
     },
     // 파일이름 설정
@@ -74,13 +74,13 @@ const postDetail = function(postIdx, callback){
         if (err) {
             console.log(err);
         } else {
-            const sql1 = 'select p.memberIdx, p.content, p.createdAt, m.email, m.name, m.img from post as p join member as m on p.memberIdx = m.idx where p.idx = ?;';
-            const sql1s = mysql.format(sql1, postIdx);
+            const sql1 = 'select p.content, p.memberIdx, p.createdAt, m.email, m.name, m.img from post as p join member as m on p.memberIdx = m.idx where p.idx = ?;';
+            const sql1s = mysql.format(sql1, postIdx)
 
             const sql2 = 'select imgName from img where postIdx = ?;';
             const sql2s = mysql.format(sql2, postIdx);
 
-            const sql3 = 'select r.content, m.name, m.email, m.img, r.memberIdx, r.idx,r.groupIdx, r.depth, r.createdAt from reply as r join member as m on r.memberIdx = m.idx where postIdx = ? order by groupIdx asc, groupNum asc;';
+            const sql3 = 'select r.content, m.name, m.email, m.img, r.memberIdx, r.idx, r.groupIdx, r.depth, r.createdAt from reply as r join member as m on r.memberIdx = m.idx where postIdx = ? order by groupIdx asc, groupNum asc;';
             const sql3s = mysql.format(sql3, postIdx);
 
             conn.query(sql1s + sql2s + sql3s, (err, result) => {
@@ -126,7 +126,7 @@ router.route('/post/delete').get((req, res) => {
             if (err) {
                 res.writeHead('200', { 'content-type': 'text/html; charset=utf8' });
                 res.write('<h2>메인데이터 출력 실패 </h2>');
-                res.write('<p>데이터가 안나옵니다.</p>')
+                res.write('<p>데이터가 안나옵니다.</p>');
                 res.end();
             } else {
                 res.send(result);
@@ -224,7 +224,7 @@ const postEdit = function (idx, content, file, hashTag, callback) {
             conn.query('update post set content = ? where idx = ?', [content, idx], (err, result1) => {
                 conn.query('select imgName from img where postIdx = ?', [idx], (err, result2) => {
                     for (let i = 0; i < result2.length; i++) {
-                        fs.unlink('uploads/images/'+result2[i].imgName, (err) => {
+                        fs.unlink('C:/project/us/frontend/public/uploads/'+result2[i].imgName, (err) => {
                             console.log(err);
                         });
                     } 

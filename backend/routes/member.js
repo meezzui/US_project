@@ -189,6 +189,7 @@ router.route('/getCookie').get((req, res)=>{
 // 로그아웃
 router.route('/member/logout').get((req, res) => {
     res.clearCookie("first");
+    res.clearCookie("three");
     req.session.destroy(function (err, result) {
         if (err) console.err('err : ', err);
         res.send(result);
@@ -519,8 +520,6 @@ const editMember = function (img, name, tel, message, gender, email, callback) {
 // http://127.0.0.1:3000/member/delete (delete)
 router.route('/member/delete').get((req, res) => {
     const idx = req.query.idx;
-
-    console.log(`email : ${idx}`);
 
     if (pool) {
         deleteMember(idx, (err, result) => {

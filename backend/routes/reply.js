@@ -7,8 +7,7 @@ const cors = require('cors');
 
 const router = express.Router()
 router.use(bodyParser.urlencoded({ extended: false }))
-router.use(bodyParser.json())
-// router.use(bodyParser.urlencoded({ extends: true }))  
+router.use(bodyParser.json())  
 router.use(cors({origin : 'http://localhost:3000', credentials : true, methods : "PUT,GET,POST,DELETE,OPTIONS,HEAD"}));
 
 // 댓글 입력
@@ -19,8 +18,6 @@ router.route('/reply/insert_reply').post((req, res) => {
     const content = req.body.content;
     const memberIdx = req.body.memberIdx;
     const parentIdx = req.body.parentIdx;
-
-    console.log(idx,groupIdx,postIdx,content,memberIdx, parentIdx);
 
     if (pool) {
         replyInsert(idx, groupIdx, postIdx, content, memberIdx, (err, result) => {
@@ -78,7 +75,7 @@ router.route('/reply/like').get((req, res) => {
     const replyIdx = req.query.replyIdx;
     const memberIdx = req.query.memberIdx;
 
-    if (당구) {
+    if (pool) {
         replyLike(replyIdx, memberIdx, (err, result) => {
             if (err) {
                 res.writeHead('201', { 'content-type': 'text/html; charset=utf8' });
@@ -188,7 +185,6 @@ const replyEdit = function (idx, content, callback) {
         }
     })
 }
-
 // 댓글 삭제
 const replyDelete = function (idx, callback) {
     pool.getConnection((err, conn) => {
@@ -203,7 +199,7 @@ const replyDelete = function (idx, callback) {
                 }
 
                 if (result[0].success == 1) {
-                    conn.query('update reply set memberIdx = ?, content = ? where idx = ?', [null, '삭제된 댓글입니다.', idx]);
+                    conn.query('update reply set content = ? where idx = ?', ['삭제된 댓글입니다.', idx]);
                 } else if (result[0].success == 0) {
                     conn.query('delete from reply where idx = ?', [idx]);
                 }
