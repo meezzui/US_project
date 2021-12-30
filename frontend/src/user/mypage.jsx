@@ -224,7 +224,7 @@ const Mypage = () =>{
                         <ul className="navBar">
                             <Link to={'/mypage?idx='+param}><li className="menuLink on">프로필 편집</li></Link>
                             <Link to={'/mypagePw?idx='+param}><li className="menuLink">비밀번호 변경</li></Link>
-                            <Link to={'/mypageMap?idx='+param}><li className="menuLink">로그인 활동</li></Link>
+                            {/* <Link to={'/mypageMap?idx='+param}><li className="menuLink">로그인 활동</li></Link> */}
                             <Link to={'/mypageQna?idx='+param}><li className="menuLink">문의하기</li></Link>
                         </ul>
                     </div>

@@ -106,7 +106,7 @@ const Findidpw2 = () => {
         })
         .then(res => {
             console.log(res)
-                window.location.href="/FinFindidpw/"
+                window.location.href="/FinFindidpw";
         })
         .catch()
     }
@@ -175,25 +175,30 @@ const Findidpw2 = () => {
                 <hr/>
                 <p>가입 시 등록한 휴대폰 번호와 이메일을 입력하시면, 이메일로 임시 비밀번호를 전송해드립니다.</p>
             </div>
+
             <form className="findemail" ref={formRef}>
+                
                 <input id="ranpw" name="ran_pw" value={to_val} type="hidden"></input>
                 <div className="tofind">
                     <p>휴대폰 번호</p>
                     <div className="phinput forheigth">
-                        <input id="ph" onChange={checkPh} placeholder="휴대폰번호를 입력해주세요."/>
-                        <p className="red"  style={{display:display4}}>* 전화번호를 다시 입력해 주세요. ('-'제외)</p>
+                    <input id="ph" onChange={checkPh} placeholder="휴대폰번호를 입력해주세요."/>
+                    <p className="red"  style={{display:display4}}>* 전화번호를 다시 입력해 주세요. ('-'제외)</p>
                     </div>
+                    
+
                     <p>이메일 주소</p>
                     <div className="phinput forheigth">
-                        <input type="email" id="email" name="user_email" onChange={checkEmail} placeholder="이메일을 입력해주세요."/>
-                        <p className="red"  style={{display:display}}>* 이메일 양식을 확인해주세요.</p> 
+                    <input type="email" id="email" name="user_email" onChange={checkEmail} placeholder="이메일을 입력해주세요."/>
+                    <p className="red"  style={{display:display}}>* 이메일 양식을 확인해주세요.</p> 
                     </div>
+                
                 </div>
                 <div className="finregi">
-                    <button type="button" value="Send" onClick={searchPw} disabled={disabled}>
-                        비밀번호 찾기
-                    </button>
-                </div>
+                <button type="button" value="Send" onClick={searchPw} disabled={disabled}>
+                    비밀번호 찾기
+                </button>
+            </div>
             </form>
             
             

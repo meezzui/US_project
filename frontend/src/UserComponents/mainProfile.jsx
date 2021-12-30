@@ -543,7 +543,7 @@ const MainProfile = ({idx, param})=>{
                                 </div>
                             </Link>
                         </div>
-                        <div className="sec_location_container">
+                        {/* <div className="sec_location_container">
                             <Link to={"/mainMap?idx="+param}>
                                 <div className="sec_location_box">
                                     <div className="sec_location_img">
@@ -554,7 +554,7 @@ const MainProfile = ({idx, param})=>{
                                     </div>
                                 </div>
                             </Link>
-                        </div>
+                        </div> */}
                     </>
                     :
                     ''
