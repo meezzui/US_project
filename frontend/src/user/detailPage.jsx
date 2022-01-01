@@ -294,7 +294,7 @@ const UploadPage = () => {
         }
     }
 
-    // 게시물 수정하기 실행
+    // 게시물 수정 실행
     const editSubmit = async () => {
         const content = editContent.current.value;
         console.log(content);
