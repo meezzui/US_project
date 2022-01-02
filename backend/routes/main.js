@@ -71,26 +71,7 @@ router.route('/main/chat').get((req, res) => {
     }
 });
 
-// 메인페이지 위치부분
-router.route('/main/place').get((req, res) => {
-    const idx = req.query.idx;
-    if (pool) {
-        mainPlace(idx, (err, result) => {
-            if (err) {
-                res.writeHead('200', { 'content-type': 'text/html; charset=utf8' });
-                res.write('<h2>메인데이터 출력 실패 </h2>');
-                res.write('<p>데이터가 안나옵니다.</p>');
-                res.end();
-            } else {
-                res.send(result);
-            }
-        });
-    } else {
-        res.writeHead('200', { 'content-type': 'text/html;charset=utf8' });
-        console.log('pool이 없대욥');
-        res.end();
-    }
-});
+
 
 // 친구 목록
 router.route('/main/friend/list').get((req, res) => {
@@ -296,16 +277,7 @@ const mainChat = function (idx, callback) {
     });
 }
 
-// 메인페이지 위치
-const mainPlace = function (idx, callback) {
-    pool.getConnection((err, conn) => {
-        if (err) {
-            console.log(err);
-        } else {
-            // 위치 query문
-        }
-    });
-}
+
 
 // 친구 목록
 const friendList = function (idx, callback) {
