@@ -135,43 +135,7 @@ router.route('/post/delete').get((req, res) => {
     }
 })
 
-// 게시글 좋아요
-router.route('/post/like').get((req, res) => {
-    const postIdx = req.query.postIdx;
-    const memberIdx = req.query.memberIdx;
 
-    if (pool) {
-        postLike(postIdx, memberIdx, (err, result) => {
-            if (err) {
-                res.writeHead('200', { 'content-type': 'text/html; charset=utf8' });
-                res.write('<h2>메인데이터 출력 실패 </h2>');
-                res.write('<p>데이터가 안나옵니다.</p>')
-                res.end();
-            } else {
-                res.send(result);
-            }
-        });
-    }
-})
-
-// 게시글 좋아요 여부
-router.route('/post/like/exist').get((req, res) => {
-    const postIdx = req.query.postIdx;
-    const memberIdx = req.query.memberIdx;
-
-    if (pool) {
-        postLikeExist(postIdx, memberIdx, (err, result) => {
-            if (err) {
-                res.writeHead('200', { 'content-type': 'text/html; charset=utf8' });
-                res.write('<h2>메인데이터 출력 실패 </h2>');
-                res.write('<p>데이터가 안나옵니다.</p>')
-                res.end();
-            } else {
-                res.send(result);
-            }
-        });
-    }
-})
 
 
 
@@ -304,50 +268,6 @@ const postDelete = function (idx, callback) {
     });
 }
 
-// 게시글 좋아요
-const postLike = function (postIdx, memberIdx, callback) {
-    pool.getConnection((err, conn) => {
-        if (err) {
-            console.log(err);
-        } else {
-            conn.query('select exists (select idx from post_like where postIdx = ? and memberIdx = ? limit 1) as success;', [postIdx, memberIdx], (err, result) => {
-                if(result[0].success == 1) {
-                    conn.query('delete from post_like where postIdx = ? and memberIdx = ?', [postIdx, memberIdx]);
-                } else {
-                    conn.query('insert into post_like(postIdx, memberIdx) values(?, ?)', [postIdx, memberIdx]);
-                }
-
-                conn.release();
-                if (err) {
-                    callback(err, null);
-                    return;
-                } else {
-                    callback(null, true);
-                }
-            })
-        }
-    });
-}
-
-// 게시글 좋아요 여부
-const postLikeExist = function (postIdx, memberIdx, callback) {
-    pool.getConnection((err, conn) => {
-        if (err) {
-            console.log(err);
-        } else {
-            conn.query('select EXISTS (select idx from post_like where postIdx = ? and memberIdx = ? limit 1) as success;', [postIdx, memberIdx], (err, result) => {
-
-                conn.release();
-                if (err) {
-                    callback(err, null);
-                    return;
-                } else {
-                    callback(null, result);
-                }
-            })
-        }
-    });
-}
 
 
 
