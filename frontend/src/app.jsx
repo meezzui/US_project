@@ -20,7 +20,6 @@ import ChatDetailPage from './admin/chatDetailPage';
 // 사용자
 import MainPage from './user/main';
 import MainTalkPage from './user/mainTalkPage';
-import MainMapPage from './user/mainMapPage';
 
 import SignInPage from './user/SignInPage';
 import RegistPage from './user/RegistPage';
@@ -58,7 +57,6 @@ function App() {
         {/* 사용자 */}
         <Route path={"/main/:idx"} element={<MainPage/>}/>
         <Route path={"/maintalk"} element={<MainTalkPage/>}/>
-        <Route path={"/mainmap"} element={<MainMapPage/>}/>
         
         <Route path={"/Regist1"} element={<RegistPage/>}/>
         <Route path={"/"} element={<SignInPage/>}/>
