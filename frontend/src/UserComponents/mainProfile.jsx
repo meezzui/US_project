@@ -221,7 +221,7 @@ const MainProfile = ({idx, param})=>{
     const[postOn, setPostOn] = React.useState(false);
     const onOpenPost = () =>{
         setPostOn(!postOn);
-         //팝업 창 띄울 시 body 스크롤
+         //팝업 창 띄울 시 body 스크롤 보이기
         if(postOn==false){
             document.body.style.overflow = "hidden";
         }else if(postOn==true){
@@ -234,7 +234,7 @@ const MainProfile = ({idx, param})=>{
     const onOpenPostTxt = () =>{
         setPostTxtOn(!postTxtOn);
         console.log(imgFile);
-         //팝업 창 띄울 시 body 스크롤
+         //팝업 창 띄울 시 body 스크롤 보이기
         if(postTxtOn==false){
             document.body.style.overflow = "hidden";
         }else if(postTxtOn==true){
